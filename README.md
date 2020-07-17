@@ -2,6 +2,7 @@ This is a python script (?) meant to help with a real world accounting problem.
 
 The data used in this project was transaction data from a Clover point of sale device.
 For consumer protection this data is not included in this repository.
+However a sample in the rough excel file format was included for demonstration.
 
 The purpose of this script was to help organize accounting and banking information.
 
