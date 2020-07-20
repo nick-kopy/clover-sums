@@ -1,67 +1,78 @@
-#finds a particular expected sum
-#assumes target sum will be found by adding up adjacent numbers (not random)
-#to help with a real world accounting thing
+'''Finds a particular expected sum in an excel file.
+Assumes target sum will be found sequentially (not randomly).
+Used to help with a real world accounting problem.
+'''
 
-#import
-import xlrd #only currently installed on 3.7.6 64bit environment?
+# SELECT MONTH HERE; 1 is jan, 2 is feb, etc
+month = 7
+
+# SELECT TARGET HERE; no dollar sign, cents are ok (120.55)
+target = 1275
+
+import xlrd
 
 def findSum(month, target):
-    #for new/moved excel sheet change location
-    loc = (r'C:\Users\Nick\Desktop\Clover pos 2018.xlsx') #r means raw string and ignors \U \N etc
-    wb = xlrd.open_workbook(loc) #like a handle, workbook, read only once?
-    sheet = wb.sheet_by_index(month) #sheet that we'll be working with
+    '''Return combinations of numbers that match given target in a given month.
 
-    st = list() #tester list where we're keeping our elements to sum up
-    wn = list() #list of winning element combos and names that each combo starts with
-    numwn = 0 #number of winning combos
-    overdraw = 0
+    Arguments:
+        month (int): The number of a given month (1 is Jan, 2 is Feb...)
+        target (int, float): The sum of charges to be found
+    
+    Returns:
+        num_win (int): number of combinations that match target
+        matches (str): flattened list of combinations that match target
+        (str): returns string if no combinations found
+    '''
 
-    #each iteration is a new place to start adding elements to a tester list
-    for i in range(1, sheet.nrows):
-        startpos = i
-        if sheet.cell_value(startpos, 25) == 'FAIL': #ignores declined purchases
+    # Replace 'transaction_data.xlsx' to your machine's 'local_path/transactiondata.xlsx'
+    # Do not delete the r
+    loc = (r'transaction_data.xlsx')
+    sheet = xlrd.open_workbook(loc).sheet_by_index(month)
+
+    # Tester list is used to sum up charges and compare against target
+    sums = list()
+
+    # List of winning element combinations and names to be returned
+    matches = list()
+
+    num_win = 0
+
+    # Each iteration sequentially looks for a target matching sum starting from a new row
+    for row in range(1, sheet.nrows):
+        
+        if sheet.cell_value(row, 25) == 'FAIL':  # Ignores declined purchases
             continue
-        if overdraw == 1: #ran out of things to add, can't get up to target, done looking
-            break
-        i2 = 0
+        
+        # Indexer i used to count values below the starting row
+        i = 0
 
-        #second indexer i2 is adding elements until match/overdraw condition
-        while True:
-            if startpos + i2 == sheet.nrows: #saves some processing power
-                overdraw = 1
-                break
-            if sheet.cell_value(startpos + i2, 25) == 'FAIL': #ignores fails again
-                i2 += 1
+        for i in range(sheet.nrows - row):
+
+            if sheet.cell_value(row + i, 25) == 'FAIL':
                 continue
 
-            #print(sheet.cell_value(startpos + i2, 13))
-            st.append(sheet.cell_value(startpos + i2, 13))
-            if sum(st) == target:
-                wn.append(sheet.cell_value(startpos, 9))
-                wn = wn + st
-                numwn += 1
-                st = []
-                #print('winner found')
+            elif sum(sums) == target:
+                matches.append(sheet.cell_value(row, 9))
+                matches = matches + sums
+                num_win += 1
+                sums = []
+            
+            sums.append(sheet.cell_value(row + i, 13))
+            
+            if sum(sums) > target:
+                sums = []
                 break
-                #look for more winners though
-            elif sum(st) > target:
-                st = [] 
-                #print('gone over!')
-                break
-            else:
-                i2 += 1
     
-    if len(wn) == 0:
+    if len(matches) == 0:
         return 'target not found'
+
+    elif num_win == 1:
+        print('found', num_win, 'combination that matches target')
+        return ', '.join(map(str,matches))
+        
     else:
-        print('found', numwn, 'combination(s) that match target')
-        return wn
+        print('found', num_win, 'combinations that match target')
+        return ', '.join(map(str,matches))
 
-#SELECT MONTH HERE; 0 is jan, 1 is feb, etc
-mon = 1 
 
-#SELECT TARGET HERE (does it need to float?)
-tar = 8915
-
-output = findSum(mon, tar)
-print(output)
+print(findSum(month-1, target))
