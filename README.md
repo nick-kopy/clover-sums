@@ -41,15 +41,22 @@ This script did not completely reconcile the accounts, but was a useful tool for
 ### Running the search tool
 Wherever you have clover-sums.py opened up you can change what month to look in and what dollar amount to look for.
 
-Single match suggestion:
-'''
-month = 1
-target = 1930
-'''
-'''
-found 1 combination that matches target
-Elijah, 1260.0, 255.0, 415.0
-'''
-Result will be a list of numbers in sequence that add up to your target, preceeded by the name associated with the first number.
+*Single match suggestion:*
 
-Multiple match suggestion:
+    month = 1
+    target = 1930
+
+    found 1 combination that matches target
+    Elijah, 1260.0, 255.0, 415.0
+
+Result will include the name associated with the first charge in your match, followed by all other charges that add up to your target.
+
+*Multiple match suggestion:*
+
+    month = 7
+    target = 1275
+    
+    found 3 combinations that match target
+    Oliver, 255.0, 1020.0, Sophia, 1020.0, 255.0, Benjamin, 255.0, 1020.0
+
+Result will include the first name from a match, followed by all charges that add up to your target, followed by other matches in the same format.
