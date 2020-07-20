@@ -1,4 +1,4 @@
-'''Finds a particular expected sum in an excel file.
+'''Finds a particular expected sum in a specific excel file.
 Assumes target sum will be found sequentially (not randomly).
 Used to help with a real world accounting problem.
 '''
@@ -27,7 +27,7 @@ def findSum(month, target):
     # Replace 'transaction_data.xlsx' to your machine's 'local_path/transactiondata.xlsx'
     # Do not delete the r
     loc = (r'transaction_data.xlsx')
-    sheet = xlrd.open_workbook(loc).sheet_by_index(month)
+    sheet = xlrd.open_workbook(loc).sheet_by_index(month-1)
 
     # Tester list is used to sum up charges and compare against target
     sums = list()
@@ -75,4 +75,4 @@ def findSum(month, target):
         return ', '.join(map(str,matches))
 
 
-print(findSum(month-1, target))
+print(findSum(month, target))
